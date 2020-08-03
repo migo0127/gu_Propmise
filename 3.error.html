@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+</head>
+<body>
+
+    <script>
+        /*
+            目標：進一步理解JS中的錯誤(Error)和錯誤處理。
+
+            一、錯誤的類型：
+                1.Error：所有錯誤的父類型。
+                2.ReferenceError：引用的變量不存在。
+                3.TypeError：數據類型不正確的錯誤。
+                4.RangeError：數據值不在其所允許的範圍內。
+                5.SyntaxError：語法錯誤。
+
+            二、錯誤處理：
+                1.補獲錯誤：try....catch
+                2.拋出錯誤：throw error
+
+            三、錯誤物件：
+                1.message屬性：錯誤相關訊息。
+                2.stack屬性：函數調用棧紀錄信息。
+         */
+
+        // 一、錯誤的類型：常見的內置錯誤
+        // 2.ReferenceError：引用的變量不存在
+        // console.log(a); // Uncaught ReferenceError: a is not defined
+        // console.log('-------'); // 上面沒有補獲error(Uncaught)，下面的代碼就不會執行
+
+
+        // 3.TypeError：數據類型不正確的錯誤
+        // let a = null;
+        // console.log(a.xxx); // Uncaught TypeError: Cannot read property 'xxx' of null
+        // a = {};
+        // a.xxx(); // Uncaught TypeError: a.xxx is not a function
+
+
+        // 4.RangeError：數據值不在其所允許的範圍內
+        // function fn(){
+        //     fn(); // 遞歸自調用
+        // }
+        // fn();  // Uncaught RangeError: Maximum call stack size exceeded
+
+
+        // 5.SyntaxError：語法錯誤
+        // const c = ''''; // Uncaught SyntaxError: Unexpected string
+
+
+        // 二、錯誤處理：
+        // 1.補獲錯誤：try...catch
+        // try{
+        //     let d;
+        //     console.log(d.xxx);
+        // }catch(error){
+        //     console.log('message' + error.message);
+        //     // messageCannot read property 'xxx' of undefined
+
+        //     console.log('stack' + error.stack);
+        //     // stackTypeError: Cannot read property 'xxx' of undefined
+        //     // at http://127.0.0.1:5500/3.error.html:58:27
+        // }
+        // console.log('補獲錯誤之後');
+
+        // Ans：error.message  error.stack  '補獲錯誤之後'
+
+
+        // 2.拋出錯誤：throw error
+        function something(){
+            if(Date.new()%2 === 1){
+                console.log('當前時間為奇數，可以執行任務');
+            }else{ // 如果時間是偶數拋出異常，由調用來處理錯誤顯示方式
+                throw new Error('當前時間為偶數，無法執行任務');
+            }
+        }
+
+        try{
+            something();
+        }catch(e){
+            console.log('e.stack '+ e.stack);
+            // e.stack TypeError: Date.new is not a function
+            // at something (http://127.0.0.1:5500/3.error.html:74:24)
+            // at http://127.0.0.1:5500/3.error.html:82:13
+
+            alert('e.message '+ e.message);
+            // e.message Date.new is not a function
+        }
+
+
+    </script>
+</body>
+</html>

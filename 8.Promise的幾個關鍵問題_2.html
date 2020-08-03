@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise的幾個關鍵問題_2</title>
+</head>
+<body>
+
+
+    <script>
+        /*
+            ● Promise的關鍵字：串連、傳透、中斷、誰來決定新Promise的狀態。
+
+            ● Promise的幾個關鍵問題(7個)：
+                3.改變Promise狀態和指定回調函數時，誰先誰後？
+                    3-1.都有可能，正常情況下是先指定回調函數再改變狀態，但也可以先改變狀態再
+                        指定回調函數。
+
+                    3-2.如何先改狀態再指定回調函數？
+                        Ans：
+                            3-2-1.在執行器中直接調用 resolve() / reject()
+                            3-2-2.延遲更長時間才調用then() (計時器)
+
+                    3-3.什麼時候才能得到數據？
+                        Ans：
+                            3-3-1.如果先指定回調函數，當狀態發生改變時，回調函數就會調用，得到數據。
+                            3-3-2.如果先改變狀態，那當指定回調函數時，回調函數就會調用，得到數據。
+        */
+
+        // 常規：先指定回調函術，後改變狀態
+        new Promise((resolve,reject)=>{
+            setTimeout(()=>{
+                resolve(1); // 後改變狀態(同時指定數據)，異步執行回調函數 value => {}
+            },1000)
+        }).then( // 同步執行，先指定回調函數，並保存當前指定的回調函數(內部程式自動操作)
+            value => { // 異步調用
+                console.log('value1: ' + value);
+            },
+            reason => { // 異步調用
+                console.log('reason1: ' + reason);
+            }
+        )
+        console.log('-----1-----');
+
+        // 先改變狀態，後指定回調函數之方式一：
+        new Promise((resolve,reject)=>{
+            resolve(2); // 同步執行，先改變狀態，並保存狀態(內部程式自動操作)
+        }).then( // 同步執行指定回調函數
+            value => { // 異步調用
+                console.log('value2: ' + value);
+            },
+            reason => { // 異步調用
+                console.log('reason2: ' + reason);
+            }
+        )
+        console.log('-----2-----');
+
+        // 先改變狀態，後指定回調函數之方式二：
+        const p = new Promise((resolve,reject)=>{
+            setTimeout(()=>{
+                resolve(3);
+            },1000)
+        })
+
+        setTimeout(()=>{
+            p.then(
+                value => { // 異步調用
+                    console.log('value3: ' + value);
+                },
+                reason =>{ // 異步調用
+                    console.log('reason3: ' + reason);
+                }
+            )
+        },1100)
+        console.log('-----3-----');
+
+    </script>
+</body>
+</html>

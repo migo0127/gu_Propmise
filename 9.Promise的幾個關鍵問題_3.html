@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise的幾個關鍵問題_3</title>
+</head>
+<body>
+
+    <script>
+        /*
+            ● Promise的關鍵字：串連、傳透、中斷、誰來決定新Promise的狀態。
+
+            ● Promise的幾個關鍵問題(7個)：
+                4.Promise.then()返回的新Promise的結果狀態由什麼決定？
+                    4-1.簡單表達：由then()指定的回調函數所執行的結果來決定。
+                    4-2.詳細表達：
+                        4-2-1.如果是拋出異常，新Promise變為rejected，reason為 拋出的異常值。
+                        4-2-2.如果返回的是非Promise的任意值，新Promise變為resolved，value為返回的值。
+                        4-2-3.如果返回的是另一個新Promise，此Promise的結果會成為新Promise的狀態結果。
+        */
+        new Promise((resolve,reject)=>{
+            resolve(1);
+        }).then(
+            value => {
+                console.log('onResolved()1 : ' + value);
+                // 沒有任何返回值(結果)，但也未拋異常  // onResolved()1: 1  / onResolved()2: undefined
+                // throw 5; // onResolved()1: 1  / onRejected()2: 5
+                // return 2; // onResolved()1: 1  / onResolved()2: 2
+                // return Promise.resolve(3); // onResolved()1: 1  / onResolved()2: 3
+                return Promise.reject(4); // onResolved()1: 1  / onRejected()2: 4
+            },
+            reason => {
+                console.log('onRejected()1 : ' + reason);
+            }
+        ).then( // 此then的回調函數應該調用哪一個，由上面的then的返回值/結果來決定。
+            value => {
+                console.log('onResolved()2 : ' + value);
+            },
+            reason => {
+                console.log('onRejected()2 : ' + reason);
+                // 沒有任何返回值(結果)，但也未拋異常 // onRejected()2: 4  / onResolved()3: undefined
+            }
+        ).then( // 此then的回調函數應該調用哪一個，由上面的then的返回值/結果來決定。
+            value => {
+                console.log('onResolved()3 : ' + value);
+            },
+            reason => {
+                console.log('onRejected()3 : ' + reason);
+            }
+        )
+
+        // return Promise.reject(4);
+        // Ans： onResolved()1 : 1  onRejected()2 : 4  onResolved()3 :undefined
+
+    </script>
+
+</body>
+</html>

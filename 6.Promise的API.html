@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise的API</title>
+  </head>
+  <body>
+    <script>
+      /*
+            ● API：大致意義上可以分為 語法 或 前後台的接口。
+
+            ● Promise的API(語法)：
+                1.Promise構造函數：Promise(excutor){}
+                    excutor函數：同步執行 (resolve,reject) => {}
+                    resolve函數：內部定義成功時我們調用的函數 value => {}
+                    reject函數：內部定義失敗時我們調用的函數 reason => {}
+
+                    ※ 說明：excutor(執行器函數)會在Promise內部立即同步回調，異步操作在執行器中執行。
+
+                2.Promise.prototype.then方法 (實例物件的方法)：(onResolved,onRejected) => {}
+                    onResolved函數：成功的回調函數 (value) => {}
+                    onRejected函數：失敗的回調函數 (reason) => {}
+
+                    ※ 說明：指定用於得到成功value的成功回調和用於得到失敗reason的失敗回調，並返回一個
+                             新的Promise物件。
+
+                3.Promise.prototype.catch方法(實例物件的方法)：(onRejected) => {}
+                    onRejected函數：失敗的回調函數 (reason) => {}
+
+                    ※ 說明：then()的語法糖，相當於：then(undefined, onRejected)
+
+                4.Promise.resolve方法 (函數物件的方法)： (value) => {}
+                    value：成功的數據或Promise物件。
+
+                    ※ 說明：返回一個成功/失敗的Promise物件。
+
+                5.Promise.reject方法 (函數物件的方法)： (reason) => {}
+                    reason：失敗的原因。
+
+                    ※ 說明：返回一個失敗的Promise物件。
+
+                6.Promise.all方法 (函數物件的方法)： (promises) => {}
+                    promises：包含N個Promise的陣列。
+
+                    ※ 說明：返回一個新的Promise，只有所有的Promise都成功才成功，只要有一個失敗了就直
+                             接失敗，其順序是依照陣列的順序，非執行時先返回的值為準(與race相反)。
+
+                7.Promise.race方法 (函數物件的方法)： (promise) => {}
+                    promises：包含N個Promise的陣列。
+
+                    ※ 說明：返回一個新的Promise，第一個返回的Promise的結果狀態就是最終的結果狀態，其
+                             結果是依最先執行完成的為準，非依照陣列順序(與all相反)。
+        */
+        new Promise((resolve,reject)=>{
+            setTimeout(()=>{
+                resolve('成功的數據');
+                // reject('失敗的數據');
+            },1000)
+        }).then(
+            value => {
+                console.log('onResolved()1 ' + value);
+                console.log('-------------------------');
+            }
+        ).catch(
+            reason => {
+                console.log('onRejected()1 ' + reason);
+                console.log('-------------------------');
+            }
+        )
+
+        // 產生一個成功值為1、2的Promise物件，失敗值為3的Promise物件
+        const p1 = new Promise((resolve,reject)=>{
+            resolve(1);
+        })
+        const p2 = Promise.resolve(2);
+        const p3 = Promise.reject(3);
+
+        p1.then(
+            value => {
+                console.log('p1: ' + value);
+            }
+        )
+
+        p2.then(
+            value =>{
+                console.log('p2: ' + value);
+            }
+        )
+
+        p3.catch(
+            reason => {
+                console.log('p3: ' + reason);
+                console.log('-------------------------');
+            }
+        )
+
+
+
+        // Promise.all([])：是依照陣列順序輸出，要全部都成功才行，輸出順序與結果優先返回順序無關。
+        // const pAll = Promise.all([p1,p2,p3]);
+        // const pAll = Promise.all([p1,p2]);
+        const pAll = Promise.all([p2,p1]); // 依陣列順序為輸出結果，與返回優先順利無關
+        pAll.then(
+            values => {
+                console.log('pAll onResolved(): ' + values);
+                console.log(values);
+                console.log('-------------------------');
+            },
+            reason => {
+                console.log('pAll onRejected(): ' + reason);
+                console.log('-------------------------');
+            }
+        )
+
+
+        // Promise.race([])：是依照結果優先返回的第一個為準，與陣列順序無關。
+        const p4 = new Promise((resolve,reject)=>{
+            setTimeout(()=>{
+                resolve(4);
+            },100)
+        })
+
+        // const pRace = Promise.race([p1,p2,p4,p3]);
+        const pRace = Promise.race([p4,p2,p3]); // p4雖在陣列第一個，但優先返回結果的是p2，故依p2為準
+        // const pRace = Promise.race([p3,p2,p1]);
+        pRace.then(
+            value =>{
+                console.log('pRace onResolved(): ' + value);
+                console.log(value);
+                console.log('-------------------------');
+            },
+            reason =>{
+                console.log('pRace onRejected(): ' + reason);
+                console.log('-------------------------');
+            }
+        )
+
+
+    </script>
+  </body>
+</html>

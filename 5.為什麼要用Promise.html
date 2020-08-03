@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>為什麼要用Promise</title>
+</head>
+<body>
+
+    <script>
+        /*
+            ● 為什麼要用Promise？
+
+                1.指定回調函數的方式更加靈活：
+                    舊的方式：必須在啟動異步任務前指定回調函數。
+                    Promise：啟動異步任務 => 返回promise物件 => 給promise物件綁定回調函數(甚至
+                    可以在異步任務結束後指定)。
+
+                2.支持鏈式調用，可以解決回調地獄問題：
+                    舊的方式：
+                        2-1.什麼是回調地獄？
+                            Ans：回調函數嵌套調用，外部回調函數異步執行的結果是該嵌套回調函數的執行條件。
+
+                        2-2.回調地獄的缺點？
+                            Ans：不便於閱讀 / 不便於異常處理。
+
+                    解決方案？
+                        Ans：Promise鏈式調用，但仍有回調函數的使用。
+
+                    終極解決方案？
+                        Ans：async / await，不會使用回調函數來執行。
+        */
+
+        // 以下為偽代碼參考說明：無法執行
+
+        // 1-2-1.舊方式的成功回調函數：
+        function successCallback(result){
+            console.log('聲音文件創建成功: ' + result);
+        }
+
+        // 1-2-2.舊方式的失敗回調函數：
+        function failureCallback(error){
+            console.log('聲音文件創建失敗: ' + error);
+        }
+
+        // 1-1.使用純回調函數：在創建純回調函數時，就要一併綁定好成功/失敗的回調函數
+        createAudioFileAsync(audioSettings, successCallback, failureCallback);
+
+        // 2-1.使用Promise：
+        const promise = createAudioFileAsync(audioSettings);
+        setTimeout(()=>{
+            promise.then(successCallback,failureCallback);
+        },3000)
+
+
+        // 1-3.回調地獄：外部回調函數的結果是嵌套函數的執行條件
+        doSomething(function(result){
+            doSomethingElse(result,function(newResult){
+                doThirdThing(newResult,function(finalResult){
+                    console.log('Got the final result: ' + finalResult);
+                },failureCallback)
+            },failureCallback)
+        },failureCallback)
+
+
+        // 2-2.使用Promise的鏈式調用解決回調地獄：
+        doSomething()
+        .then(function(result){
+            return doSomethingElse(result);
+        })
+        .then(function(newRsult){
+            return doThirdThing(newRsult);
+        })
+        .then(function(finalResult){
+            console.log('Got the final result: ' + finalResult);
+        })
+        .catch(failureCallback);
+
+        // 3.async / await：回調地獄的終極解決方案
+        async function request(){
+            try{
+                const result = await doSomething();
+                const newResult = await doSomethingElse(result);
+                const finalResult = await doThirdThing(newResult);
+                console.log('Got the final result: ' + finalResult);
+            }catch(error){
+                failureCallback(error);
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise的幾個關鍵問題_4</title>
+</head>
+<body>
+
+    <script>
+        /*
+            ● Promise的關鍵字：串連、傳透、中斷、誰來決定新Promise的狀態。
+
+            ● Promise的幾個關鍵問題(7個)：
+                5.Promise如和串連多個操作任務？
+                    5-1.Promise的then()返回一個新的Promise，可以開成then()的鏈式調用。
+                    5-2.通過then()的鏈式調用串連多個同步/異步任務。
+
+                ※ 異步操作都要包在new Promise裡！！
+        */
+        new Promise((resolve,reject)=>{
+            setTimeout(()=>{
+                console.log('---執行任務1(異步)---');
+                resolve(1);
+            },1000)
+        }).then(
+            value => {
+                console.log('任務1的結果 : ' + value);
+                console.log('---執行任務2(同步)---');
+                // return Promise.resolve(2);
+                // return 2;
+                // resolve(2); // ReferenceError: resolve is not defined
+                // return resolve(2); // ReferenceError: resolve is not defined
+            }
+        ).then(
+            value => {
+                console.log('任務2的結果 : ' + value);
+                return new Promise((resolve,reject)=>{
+                    setTimeout(()=>{
+                        console.log('---執行任務3(異步)---');
+                        resolve(3);
+                    },1000)
+                })
+            }
+        ).then(
+            value => {
+                console.log('任務3的結果 : ' + value);
+            }
+        )
+
+
+    </script>
+
+</body>
+</html>

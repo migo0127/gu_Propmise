@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回調函數的分類</title>
+</head>
+<body>
+
+    <script>
+        /*
+            1.同步回調：
+                理解：立即執行，完全執行完了才結束，不會放入回調隊列中。
+                例子：陣列遍歷相關的回調函數 / Promise的excutor函數。
+
+            2.異步回調：
+                理解：不會立即執行，會放入回調陣列中將來執行。
+                例子：定時器回調 / ajax回調 / Promise的成功|失敗的回調。
+        */
+
+        // 1.同步回調函數：
+        const arr = [1,2,3];
+        arr.forEach( item => { // 遍歷回調，同步回調函數不會放入隊列，一上來就要執行完
+            console.log(item);
+        })
+        console.log('forEach()之後');
+
+        // Ans： 1 2 3 'forEach()之後'
+
+        // 2.異步回調函數：
+        setTimeout(()=>{ // 異步回調函數，會放入隊列中將來執行
+            console.log('timeout callback()');
+        },0)
+        console.log('setTimeout()之後');
+
+        // Ans：'setTimeout()之後'  'timeout callback()'
+
+    </script>
+
+</body>
+</html>

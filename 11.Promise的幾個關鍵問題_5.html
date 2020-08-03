@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise的幾個關鍵問題_5</title>
+</head>
+<body>
+
+    <script>
+        /*
+            ● Promise的關鍵字：串連、傳透、中斷、誰來決定新Promise的狀態。
+
+            ● Promise的幾個關鍵問題(7個)：
+                6.Promise異常傳透？
+                    6-1.當使用Promise的then()鏈式調用時，可以在最後指定失敗的回調函數。
+                    6-2.當前面任何操作出了異常，都會傳到最後失敗的回調函數中處理。
+                    ※ 相當於前面未寫的失敗回調函數都默認為 reason => {throw reason}
+
+                7.中斷Promise鏈？
+                    7-1.當使用Promise的then()鏈式調用時，再中間中斷，不再調用後面的回調函數。
+                        Ans：再回調函數中返回一個pending狀態的Promise物件即可。
+        */
+        new Promise((resolve,reject)=>{
+            reject(1);
+        }).then(
+            value => {
+                console.log('onResolved1() : ' + value);
+            }
+            // 當Promise為失敗狀態時，then()鏈式未有失敗的回調函數時，程式默認為以下寫法
+            // reason => {throw reason} 在往下一個then()傳透
+        ).then(
+            value => {
+                console.log('onResolved2() : ' + value);
+            }
+            // reason => {throw reason} 在往下一個then()傳透
+        ).then(
+            value => {
+                console.log('onResolved3() : ' + value);
+            }
+            // reason => {throw reason} 在往下一個then()傳透，直到被補獲為止
+        ).catch(
+            reason => {
+                console.log('onRejected1() : ' + reason);
+                /*
+                    此時的catch()也有返回值，若是沒有中斷，就會繼續往下一個then()進行，變成
+                    onRejected1() : 1  onResolved4() : undefined
+
+                */
+                // 若是要中斷鏈式調用，要返回一個pending狀態的Promise物件
+                return new Promise(()=>{}) // 狀態為pending，中斷鏈式，onRejected1() : 1
+            }
+        ).then(
+            value => {
+                console.log('onResolved4() : ' + value);
+            },
+            reason => {
+                console.log('onRejected2() : ' + reason);
+            }
+        )
+
+    </script>
+</body>
+</html>

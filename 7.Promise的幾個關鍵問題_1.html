@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise的幾個關鍵問題_1</title>
+</head>
+<body>
+
+    <script>
+        /*
+            ● Promise的關鍵字：串連、傳透、中斷、誰來決定新Promise的狀態。
+
+            ● Promise的幾個關鍵問題(7個)：
+                1.如何改變Promise的狀態(resolved、rejected)？
+                    1-1.resolve(value)：如果當前是pending就會變為resolved。
+                    1-2.rejected(reason)：如果當前是pending就會變成rejected。
+                    1-3.拋出異常(throw)：如果當前是pending就會變為rejected。
+
+                2.一個Promise指定多個成功/失敗的回調函數，都會調用嗎？
+                    Ans：當Promise改變為對應狀態時都會調用。
+        */
+
+        const p = new Promise((resolve,reject)=>{
+            // resolve(1); // Pormise變為resolved成功狀態
+            // reject(2); // Promise變為rejected失敗狀態
+            // throw new Error('出錯了'); // 拋出異常，Promise變為rejected失敗狀態，reason為 拋出的error
+            throw 3 // 拋出異常可以是任意值，Promise變為rejected失敗狀態，reasom為 拋出的3
+        })
+        p.then(
+            value => {},
+            reason => {
+                console.log('reason: ' + reason);
+            }
+        )
+        // 一個Promise指定多個成功/失敗回調函數時，仍都會被調用。
+        p.then(
+            value => {},
+            reason => {
+                console.log('reason2: ' + reason);
+            }
+        )
+
+
+    </script>
+</body>
+</html>

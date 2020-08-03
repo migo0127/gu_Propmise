@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+
+    <script>
+
+        const n = new Promise((resolve,reject) => {
+            const num = Math.floor(Math.random() * 10);
+            setTimeout(()=>{
+                if(num <= 5){
+                    resolve('數據為成功: ' + num);
+                }else{
+                    reject('數據為失敗: ' + num);
+                }
+            },1000)
+        })
+        n.then(
+            value => {
+                console.log('成功回調: ' + value);
+            },
+            reason => {
+                console.log('失敗回調: ' + reason);
+            }
+        )
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>函數物件與實例物件</title>
+</head>
+<body>
+
+    <div id="test"></div>
+
+    <script>
+        /*
+            函數物件：將函數作為物件使用時，簡稱為函數物件。
+            實例物件：new 函數產生的物件，簡稱為物件。
+         */
+
+        function Fn(){  // Fn是函數，()左邊就是函數
+
+        }
+
+        const fn = new Fn(); // Fn是構造函數，fn是實例物件(簡稱為物件)
+        console.log(Fn.prototype); // Fn是函數物件 (.)
+        Fn.call({}); // Fn是函數物件
+        $('#test') // jQuery函數
+        $.get('/test') // jQuery函數物件
+
+    </script>
+</body>
+</html>

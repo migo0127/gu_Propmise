@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise基本使用</title>
+  </head>
+  <body>
+    <script>
+      /*
+        ● Promise基本使用：
+
+            1.創建一個新的 Promise 物件
+                const p = new Promise((resolve,reject) => { // 執行器函數，同步操作
+                    2.執行異步操作
+                    setTimeout(()=>{
+                        3-1.如果成功了，調用resolve(value)
+                        3-2.如果失敗了，調用reject(reason)
+                    },1000)
+                })
+
+                4.接收成功/失敗的結果數據
+                p.then(
+                    value => { // 4-1.接收得到成功的value數據
+
+                    },
+                    reason => { // 4-2.接收得到失敗的reason數據
+
+                    }
+                )
+
+                ● 例：
+                const p = new Promise((resolve,reject) = >{
+                    setTimeout(()=>{
+                        const time = Date.new();
+                        if(time % 2 === 0){
+                            resolve('成功的數據,time = ' + time);
+                        }else{
+                            reject('失敗的數據,time = ' + time);
+                        }
+                    },1000)
+                })
+                p.then{
+                    value => {
+                        console.log('成功的回調: ' + value);
+                    },
+                    reason => {
+                        console.log('失敗的回調: ' + reason);
+                    }
+                }
+        */
+
+      // 例一：時間為偶數時成功，奇數時失敗
+      const p = new Promise((resolve, reject) => {
+        const time = Date.now();
+        setTimeout(() => {
+          if (time % 2 === 0) {
+            resolve("成功的數據，time = " + time);
+          } else {
+            reject("失敗的數據，time = " + time);
+          }
+        }, 1000);
+      });
+      p.then(
+        (value) => {
+          console.log("成功的回調: " + value);
+        },
+        (reason) => {
+          console.log("失敗的回調: " + reason);
+        }
+      );
+
+      // 例二：數字小於等於 5 時成功，大於 5 時失敗
+      const n = new Promise((resolve, reject) => {
+        const num = Math.floor(Math.random() * 10);
+        setTimeout(() => {
+          if (num <= 5) {
+            resolve("數據為成功: " + num);
+          } else {
+            reject("數據為失敗: " + num);
+          }
+        }, 1000);
+      });
+      n.then(
+        (value) => {
+          console.log("成功回調: " + value);
+        },
+        (reason) => {
+          console.log("失敗回調: " + reason);
+        }
+      );
+    </script>
+  </body>
+</html>
